@@ -3,10 +3,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { loginSuccess, loginFailure } from '../../redux/authSlice';
+import { login as loginService } from './service'; // 引入 service.ts 中的 login 函數
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,20 +27,18 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const res = await axios.post('/api/login', { email, password });
+      const res = await loginService(email, password); // 使用從 service.ts 引入的 login 函數
 
-      if (res.data.success) {
+      if (res.success) {
         dispatch(loginSuccess());
         router.push('/dashboard');
       } else {
-        dispatch(loginFailure(res.data.message || '登入失敗，請檢查您的電子郵件和密碼'));
+        dispatch(loginFailure(res.message || '登入失敗，請檢查您的電子郵件和密碼'));
+        setError(res.message || '登入失敗，請檢查您的電子郵件和密碼');
       }
     } catch (err) {
-      if (err.response) {
-        dispatch(loginFailure(err.response.data.message || '登入失敗'));
-      } else {
-        dispatch(loginFailure(err.message));
-      }
+      dispatch(loginFailure(err.message || '登入失敗'));
+      setError(err.message || '登入失敗');
     }
   };
 

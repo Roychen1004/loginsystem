@@ -6,8 +6,11 @@ interface AuthState {
   error: string | null;
 }
 
+// 檢查是否在瀏覽器環境中，避免伺服器端錯誤
+const initialIsLoggedIn = typeof window !== 'undefined' && !!localStorage.getItem('isLoggedIn');
+
 const initialState: AuthState = {
-  isLoggedIn: !!localStorage.getItem('isLoggedIn'),
+  isLoggedIn: initialIsLoggedIn || false, // 使用初始值或 false
   error: null,
 };
 
@@ -18,17 +21,23 @@ const authSlice = createSlice({
     loginSuccess(state) {
       state.isLoggedIn = true;
       state.error = null;
-      localStorage.setItem('isLoggedIn', 'true');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggedIn', 'true');
+      }
     },
     loginFailure(state, action: PayloadAction<string>) {
       state.isLoggedIn = false;
       state.error = action.payload;
-      localStorage.removeItem('isLoggedIn');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('isLoggedIn');
+      }
     },
     logout(state) {
       state.isLoggedIn = false;
       state.error = null;
-      localStorage.removeItem('isLoggedIn');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('isLoggedIn');
+      }
     },
   },
 });
