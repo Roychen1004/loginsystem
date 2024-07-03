@@ -18,6 +18,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    // 存函數 更新store狀態
     loginSuccess(state) {
       state.isLoggedIn = true;
       state.error = null;
@@ -32,16 +33,9 @@ const authSlice = createSlice({
         localStorage.removeItem('isLoggedIn');
       }
     },
-    logout(state) {
-      state.isLoggedIn = false;
-      state.error = null;
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('isLoggedIn');
-      }
-    },
   },
 });
 
-export const { loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginSuccess, loginFailure } = authSlice.actions;
 
 export default authSlice;

@@ -1,51 +1,29 @@
-// app/dashboard/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-
-interface Stablecoin {
-  id: string;
-  name: string;
-  symbol: string;
-  circulating: {
-    peggedUSD: number;
-  };
-}
+import { fetchStablecoins, Stablecoin } from './service';
 
 const DashboardPage = () => {
   const [stablecoins, setStablecoins] = useState<Stablecoin[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-
+// 副作用
   useEffect(() => {
-    const fetchStablecoins = async () => {
+    const loadStablecoins = async () => {
       try {
-        const response = await axios.get('https://stablecoins.llama.fi/stablecoins', {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        console.log('API response:', response.data);
-
-        if (response.data && response.data.peggedAssets) {
-          setStablecoins(response.data.peggedAssets);
-        } else {
-          throw new Error('Unexpected data structure');
-        }
+        const stablecoinsData = await fetchStablecoins();
+        setStablecoins(stablecoinsData);
       } catch (err) {
-        console.error('Error fetching data:', err);
         setError('Failed to fetch stablecoins data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStablecoins();
+    loadStablecoins();
   }, []);
 
   if (loading) return <p>Loading...</p>;

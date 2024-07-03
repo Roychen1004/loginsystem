@@ -15,13 +15,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
+  
+  // 執行副作用操作
   useEffect(() => {
     if (isLoggedIn) {
       router.push('/dashboard');
     }
   }, [isLoggedIn, router]);
 
+  // 處理表單事件 避免預設跳轉網頁
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');

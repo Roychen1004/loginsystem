@@ -1,7 +1,6 @@
-// app/dashboard/service.tsx
 import axios from 'axios';
 
-interface Stablecoin {
+export interface Stablecoin {
   id: string;
   name: string;
   symbol: string;
@@ -10,7 +9,7 @@ interface Stablecoin {
   };
 }
 
-export const fetchStablecoins = async (): Promise<Stablecoin[]> => {
+export const fetchStablecoins = async () => {
   try {
     const response = await axios.get('https://stablecoins.llama.fi/stablecoins', {
       headers: {
@@ -21,7 +20,7 @@ export const fetchStablecoins = async (): Promise<Stablecoin[]> => {
     console.log('API response:', response.data);
 
     if (response.data && response.data.peggedAssets) {
-      return response.data.peggedAssets;
+      return response.data.peggedAssets as Stablecoin[];
     } else {
       throw new Error('Unexpected data structure');
     }
