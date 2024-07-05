@@ -1,30 +1,10 @@
+// dashboard/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { fetchStablecoins, Stablecoin } from './service';
+import { useDashboard } from './service';
 
 const DashboardPage = () => {
-  const [stablecoins, setStablecoins] = useState<Stablecoin[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-// 副作用
-  useEffect(() => {
-    const loadStablecoins = async () => {
-      try {
-        const stablecoinsData = await fetchStablecoins();
-        setStablecoins(stablecoinsData);
-      } catch (err) {
-        setError('Failed to fetch stablecoins data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadStablecoins();
-  }, []);
+  const { stablecoins, loading, error, isLoggedIn } = useDashboard();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;

@@ -1,3 +1,7 @@
+// dashboard/service.tsx
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 import axios from 'axios';
 
 export interface Stablecoin {
@@ -8,6 +12,35 @@ export interface Stablecoin {
     peggedUSD: number;
   };
 }
+
+export const useDashboard = () => {
+  const [stablecoins, setStablecoins] = useState<Stablecoin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
+  useEffect(() => {
+    const loadStablecoins = async () => {
+      try {
+        const stablecoinsData = await fetchStablecoins();
+        setStablecoins(stablecoinsData);
+      } catch (err) {
+        setError('Failed to fetch stablecoins data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStablecoins();
+  }, []);
+
+  return {
+    stablecoins,
+    loading,
+    error,
+    isLoggedIn,
+  };
+};
 
 export const fetchStablecoins = async () => {
   try {
